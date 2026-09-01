@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -29,7 +30,11 @@ export default function AjouterDepenseScreen() {
   }
 
   return (
-    <ThemedView style={styles.container}>
+    <LinearGradient
+      colors={['#fff0f3', '#ffd9e2', '#ffc2d1']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         <ThemedText type="title" style={styles.title}>
           Nouvelle dépense
@@ -92,7 +97,7 @@ export default function AjouterDepenseScreen() {
           <ThemedText style={styles.cancelButtonText}>Annuler</ThemedText>
         </Pressable>
       </SafeAreaView>
-    </ThemedView>
+    </LinearGradient>
   );
 }
 
@@ -106,6 +111,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     color: '#838181',
     borderColor: '#d1d5db',
+    backgroundColor: '#fff5f7c7',
     borderRadius: Spacing.three,
     padding: Spacing.three,
     fontSize: 16,
@@ -117,14 +123,16 @@ const styles = StyleSheet.create({
     borderRadius: Spacing.three,
     borderWidth: 1,
     borderColor: '#d1d5db',
+    backgroundColor: '#fff5f7c7',
     alignItems: 'center',
   },
-  toggleButtonActive: { backgroundColor: '#6366f1', borderColor: '#6366f1' },
+  toggleButtonActive: { backgroundColor: '#0202029f', borderColor: '#0202029f' },
   toggleText: { fontSize: 14 },
   toggleTextActive: { fontSize: 14, color: '#ffffff', fontWeight: '600' },
   erreur: { color: '#ef4444' },
   submitButton: {
-    backgroundColor: '#6366f1',
+    // backgroundColor: '#6366f1',
+    backgroundColor: '#0202029f',
     paddingVertical: Spacing.three,
     borderRadius: Spacing.four,
     alignItems: 'center',

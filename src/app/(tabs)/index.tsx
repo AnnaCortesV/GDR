@@ -1,23 +1,21 @@
 import { useCallback, useState } from 'react';
 import { Modal, StyleSheet, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-// import { useFocusEffect } from '@react-navigation/native';
 import { useFocusEffect } from 'expo-router';
 import { router } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
 
 import { AnimatedIcon } from '@/components/animated-icon';
 import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
 import {
   Revenu,
-  getRevenus,
-  addRevenu,
   Depense,
-  getBudgetRestant,
+  getRevenus,
   getDepenses,
   getSalaire,
   setSalaire,
+  getBudgetRestant,
 } from '@/storage/budget-storage';
 import { FlatList, Pressable, Dimensions } from 'react-native';
 
@@ -36,12 +34,9 @@ export default function HomeScreen() {
     setSalaireState(s);
     setDepenses(d);
     setBudgetRestant(b);
-    // You might want to store the revenus in a state variable if needed
     setRevenus(r);
   }, []);
 
-  // Recharge les données chaque fois que cet écran redevient actif
-  // (par exemple au retour du formulaire d'ajout de dépense)
   useFocusEffect(
     useCallback(() => {
       chargerDonnees();
@@ -59,7 +54,11 @@ export default function HomeScreen() {
   }
 
   return (
-    <ThemedView style={styles.container}>
+    <LinearGradient
+      colors={['#fff0f3', '#ffd9e2', '#ffc2d1']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.container}>
       <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
         <View style={styles.header}>
           <View style={styles.logoWrapper}>
@@ -71,7 +70,7 @@ export default function HomeScreen() {
         </View>
 
         <FlatList
-          data={depenses}
+          data={[...depenses, ...revenus]}
           keyExtractor={(item) => item.id}
           ListHeaderComponent={
             <>
@@ -80,7 +79,7 @@ export default function HomeScreen() {
                   setSalaireInput(salaire ? salaire.toString() : '');
                   setModalVisible(true);
                 }}>
-                <ThemedView type="backgroundElement" style={styles.budgetCard}>
+                <View style={styles.budgetCard}>
                   <ThemedText type="small" style={styles.budgetLabel}>
                     Budget restant ce mois-ci
                   </ThemedText>
@@ -95,28 +94,28 @@ export default function HomeScreen() {
                   <ThemedText type="small" style={styles.budgetHint}>
                     {salaire > 0 ? 'Toucher pour modifier le salaire' : 'Toucher pour définir le salaire'}
                   </ThemedText>
-                </ThemedView>
+                </View>
               </Pressable>
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
-              <Pressable
-                style={({ pressed }) => [styles.addButton, pressed && styles.addButtonPressed]}
-                onPress={() => {
-                  console.log('Ajouter une dépense');
-                  router.push('/add_depense');
-                }}>
-                <ThemedText style={styles.addButtonText}>Ajouter une dépense</ThemedText>
-                
-              </Pressable>
-              <Pressable
-                style={({ pressed }) => [styles.addButton, pressed && styles.addButtonPressed]}
-                onPress={() => {
-                  console.log('Ajouter un revenu');
-                  router.push('/add_revenu');
-                }}>
-                <ThemedText style={styles.addButtonText}>  Ajouter un revenu  </ThemedText>
-                
-              </Pressable>
-          </div>
+
+              <View style={styles.buttonRow}>
+                <Pressable
+                  style={({ pressed }) => [styles.addButton, styles.addButtonFlex, pressed && styles.addButtonPressed]}
+                  onPress={() => {
+                    console.log('Ajouter une dépense');
+                    router.push('/add_depense');
+                  }}>
+                  <ThemedText style={styles.addButtonText}>Ajouter une dépense</ThemedText>
+                </Pressable>
+                <Pressable
+                  style={({ pressed }) => [styles.addButton, styles.addButtonFlex, pressed && styles.addButtonPressed]}
+                  onPress={() => {
+                    console.log('Ajouter un revenu');
+                    router.push('/add_revenu');
+                  }}>
+                  <ThemedText style={styles.addButtonText}>Ajouter un revenu</ThemedText>
+                </Pressable>
+              </View>
+
               <ThemedText type="title" style={styles.sectionTitle}>
                 Dépenses récentes
               </ThemedText>
@@ -134,7 +133,7 @@ export default function HomeScreen() {
               date.getMonth() + 1
             ).padStart(2, '0')}`;
             return (
-              <ThemedView type="backgroundElement" style={styles.expenseRow}>
+              <View style={styles.expenseRow}>
                 <View style={styles.expenseLeft}>
                   <View
                     style={[
@@ -150,7 +149,7 @@ export default function HomeScreen() {
                   </View>
                 </View>
                 <ThemedText style={styles.expenseAmount}>-{item.montant.toFixed(2)} €</ThemedText>
-              </ThemedView>
+              </View>
             );
           }}
           contentContainerStyle={styles.listContent}
@@ -159,7 +158,7 @@ export default function HomeScreen() {
 
         <Modal visible={modalVisible} transparent animationType="fade">
           <View style={styles.modalOverlay}>
-            <ThemedView type="backgroundElement" style={styles.modalCard}>
+            <View style={styles.modalCard}>
               <ThemedText type="title" style={styles.modalTitle}>
                 Salaire du mois
               </ThemedText>
@@ -179,11 +178,11 @@ export default function HomeScreen() {
                   <ThemedText style={styles.modalConfirmText}>Valider</ThemedText>
                 </Pressable>
               </View>
-            </ThemedView>
+            </View>
           </View>
         </Modal>
       </SafeAreaView>
-    </ThemedView>
+    </LinearGradient>
   );
 }
 
@@ -197,65 +196,96 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.three,
   },
   logoWrapper: { width: 32, height: 32, justifyContent: 'center', alignItems: 'center', overflow: 'hidden' },
-  headerTitle: { fontSize: 18 },
+  headerTitle: { fontSize: 18, color: '#5b3a45' },
+
   budgetCard: {
     width: '100%',
-    height: screenHeight * 0.20,
-    borderRadius: Spacing.four,
+    height: screenHeight * 0.2,
+    borderRadius: 28,
     justifyContent: 'center',
     alignItems: 'center',
     gap: Spacing.two,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.7)',
+    shadowColor: '#d17a94',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
+    elevation: 4,
   },
-  budgetLabel: { opacity: 0.7 },
-  budgetAmount: { fontSize: 36 },
-  budgetPositive: { color: '#22c55e' },
-  budgetNegative: { color: '#ef4444' },
-  budgetHint: { opacity: 0.5 },
-  addButton: {
-    backgroundColor: '#86c48b',
-    paddingVertical: Spacing.three,
-    paddingHorizontal: Spacing.five,
-    borderRadius: Spacing.four,
-    alignItems: 'center',
+  budgetLabel: { opacity: 0.7, color: '#7a4a58' },
+  budgetAmount: { fontSize: 36, color: '#5b3a45' },
+  budgetPositive: { color: '#4caf7d' },
+  budgetNegative: { color: '#e0577a' },
+  budgetHint: { opacity: 0.5, color: '#7a4a58' },
+
+  buttonRow: {
+    flexDirection: 'row',
+    gap: 10,
     marginTop: Spacing.four,
     marginBottom: Spacing.four,
   },
-  addButtonPressed: { opacity: 0.85 },
-  addButtonText: { color: '#ffffff', fontWeight: '600', fontSize: 16 },
-  sectionTitle: { fontSize: 18, marginBottom: Spacing.three },
-  emptyText: { opacity: 0.5, marginBottom: Spacing.three },
+  addButtonFlex: { flex: 1 },
+  addButton: {
+    // backgroundColor: 'rgba(255, 255, 255, 0.55)',
+    backgroundColor: '#5b3a45',
+    paddingVertical: Spacing.three,
+    paddingHorizontal: Spacing.four,
+    borderRadius: 20,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.7)',
+  },
+  addButtonPressed: { opacity: 0.8 },
+  addButtonText: { color: '#ffffffbb', fontWeight: '600', fontSize: 15 },
+// color: '#7a3a52'
+  sectionTitle: { fontSize: 18, marginBottom: Spacing.three, color: '#5b3a45' },
+  emptyText: { opacity: 0.5, marginBottom: Spacing.three, color: '#7a4a58' },
   listContent: { paddingBottom: Spacing.five },
+
   expenseRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.three,
-    borderRadius: Spacing.three,
+    borderRadius: 18,
     marginBottom: Spacing.two,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.65)',
   },
   expenseLeft: { flexDirection: 'row', alignItems: 'center', gap: Spacing.two },
   expenseTag: { width: 4, height: 32, borderRadius: 2 },
-  tagFixe: { backgroundColor: '#6366f1' },
-  tagVariable: { backgroundColor: '#f59e0b' },
-  expenseName: { fontSize: 15, fontWeight: '600' },
-  expenseDate: { opacity: 0.6 },
-  expenseAmount: { fontSize: 15, fontWeight: '600' },
+  tagFixe: { backgroundColor: '#c26b8a' },
+  tagVariable: { backgroundColor: '#e8a2b5' },
+  expenseName: { fontSize: 15, fontWeight: '600', color: '#5b3a45' },
+  expenseDate: { opacity: 0.6, color: '#7a4a58' },
+  expenseAmount: { fontSize: 15, fontWeight: '600', color: '#5b3a45' },
+
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(91, 58, 69, 0.35)',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  modalCard: { width: '85%', borderRadius: Spacing.four, padding: Spacing.four, gap: Spacing.three },
-  modalTitle: { fontSize: 18, textAlign: 'center' },
+  modalCard: {
+    width: '85%',
+    borderRadius: 24,
+    padding: Spacing.four,
+    gap: Spacing.three,
+    backgroundColor: '#fff5f7',
+  },
+  modalTitle: { fontSize: 18, textAlign: 'center', color: '#5b3a45' },
   modalInput: {
     borderWidth: 1,
-    borderColor: '#d1d5db',
+    borderColor: '#f0c4d1',
     borderRadius: Spacing.three,
     padding: Spacing.three,
     fontSize: 18,
     textAlign: 'center',
+    color: '#5b3a45',
   },
   modalButtons: { flexDirection: 'row', gap: Spacing.three },
   modalCancel: { flex: 1, padding: Spacing.three, alignItems: 'center', borderRadius: Spacing.three },
@@ -264,7 +294,7 @@ const styles = StyleSheet.create({
     padding: Spacing.three,
     alignItems: 'center',
     borderRadius: Spacing.three,
-    backgroundColor: '#6366f1',
+    backgroundColor: '#c26b8a',
   },
   modalConfirmText: { color: '#ffffff', fontWeight: '600' },
 });
