@@ -47,10 +47,22 @@ export default function AjouterDepenseScreen() {
       end={{ x: 1, y: 1 }}
       style={styles.container}
     >
-      <SafeAreaView style={styles.safeArea}>
+      {/* <SafeAreaView style={styles.safeArea}>
         <ThemedText type="title" style={styles.title}>
+        <Pressable onPress={() => router.back()} style={styles.backButton}>
+                            <ThemedText style={styles.backButtonText}>‹</ThemedText>
+                          </Pressable>
           Nouvelle dépense
-        </ThemedText>
+        </ThemedText> */}
+ <SafeAreaView style={styles.safeArea}>
+    <View style={styles.header}>
+      <Pressable onPress={() => router.back()} style={styles.backButton}>
+        <ThemedText style={styles.backButtonText}>‹</ThemedText>
+      </Pressable>
+      <ThemedText type="title" style={styles.title}>
+        Nouvelle dépense
+      </ThemedText>
+    </View>
 
         <View style={styles.field}>
           <ThemedText type="small" style={styles.label}>
@@ -159,9 +171,9 @@ const styles = StyleSheet.create({
     gap: Spacing.four,
     paddingTop: Spacing.four,
   },
-  title: { fontSize: 22, marginBottom: Spacing.two },
+  // title: { fontSize: 22, marginBottom: Spacing.two, color: '#020202' },
   field: { gap: Spacing.two },
-  label: { opacity: 0.7 },
+  label: { opacity: 0.7, color: '#020202' },
   input: {
     borderWidth: 1,
     color: "#838181",
@@ -185,7 +197,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#0202029f",
     borderColor: "#0202029f",
   },
-  toggleText: { fontSize: 14 },
+  toggleText: { fontSize: 14, color: '#020202' },
   toggleTextActive: { fontSize: 14, color: "#ffffff", fontWeight: "600" },
   erreur: { color: "#ef4444" },
   submitButton: {
@@ -198,7 +210,7 @@ const styles = StyleSheet.create({
   },
   submitButtonText: { color: "#ffffff", fontWeight: "600", fontSize: 16 },
   cancelButton: { paddingVertical: Spacing.three, alignItems: "center" },
-  cancelButtonText: { opacity: 0.6 },
+  cancelButtonText: { opacity: 0.6, color: '#020202' },
 
   modalLabel: { color: "#7a4a58" },
   modalInput: {
@@ -209,4 +221,40 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: "#5b3a45",
   },
+
+    // backButton: { paddingVertical: Spacing.one, paddingRight: Spacing.five },
+  // backButtonText: { color: "#c26b8a", fontSize: 30 },
+  headerTitle: { fontSize: 18, color: "#5b3a45" },
+
+
+  header: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  paddingVertical: Spacing.three,
+},
+backButton: {
+  width: 46,
+  height: 46,
+  borderRadius: 23,
+  backgroundColor: 'rgba(255, 255, 255, 0.6)',
+  justifyContent: 'center',
+  alignItems: 'center',
+  borderWidth: 1,
+  borderColor: 'rgba(255, 255, 255, 0.8)',
+},
+backButtonText: {
+  fontSize: 30,
+  color: '#7a3a52',
+  lineHeight: 46,
+},
+title: {
+  fontSize: 20,
+  color: '#5b3a45',
+  textAlign: 'center',
+  flex: 1,
+},
+headerSpacer: {
+  width: 36, // même largeur que backButton, pour équilibrer visuellement
+},
 });

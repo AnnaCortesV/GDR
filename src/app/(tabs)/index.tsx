@@ -85,7 +85,7 @@ export default function HomeScreen() {
 
   return (
     <LinearGradient
-      colors={["#fff0f3", "#ffd9e2", "#ffc2d1"]}
+      colors={["#fcfaf9", "#f39da1fd"]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.container}
@@ -95,6 +95,7 @@ export default function HomeScreen() {
           {/* <View style={styles.logoWrapper}>
             <AnimatedIcon />
           </View> */}
+      
           <ThemedText type="title" style={styles.headerTitle}>
             Gestion des ressources
           </ThemedText>
@@ -134,6 +135,7 @@ export default function HomeScreen() {
                 </View>
               </Pressable>
 
+
               <View style={styles.buttonRow}>
                 <Pressable
                   style={({ pressed }) => [
@@ -150,6 +152,9 @@ export default function HomeScreen() {
                     Ajouter une dépense
                   </ThemedText>
                 </Pressable>
+
+
+
                 <Pressable
                   style={({ pressed }) => [
                     styles.addButton,
@@ -166,6 +171,8 @@ export default function HomeScreen() {
                   </ThemedText>
                 </Pressable>
               </View>
+
+
 
               <ThemedText type="title" style={styles.sectionTitle}>
                 Transactions récentes
@@ -348,16 +355,16 @@ const styles = StyleSheet.create({
   addButtonFlex: { flex: 1 },
   addButton: {
     // backgroundColor: 'rgba(255, 255, 255, 0.55)',
-    backgroundColor: "#5b3a45",
+    backgroundColor: "#ffffff",
     paddingVertical: Spacing.three,
     paddingHorizontal: Spacing.four,
     borderRadius: 20,
     alignItems: "center",
-    borderWidth: 1,
+    borderWidth: 0,
     borderColor: "rgba(255, 255, 255, 0.7)",
   },
   addButtonPressed: { opacity: 0.8 },
-  addButtonText: { color: "#ffffffbb", fontWeight: "600", fontSize: 15 },
+  addButtonText: { color: "#5b3a45", fontWeight: "600", fontSize: 10 },
   // color: '#7a3a52'
   sectionTitle: { fontSize: 18, marginBottom: Spacing.three, color: "#5b3a45" },
   emptyText: { opacity: 0.5, marginBottom: Spacing.three, color: "#7a4a58" },

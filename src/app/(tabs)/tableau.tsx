@@ -18,6 +18,8 @@ import {
   getDepenses,
   togglePaye,
   updateDepense,
+  getRevenus,
+  Revenu,
 } from "@/storage/budget-storage";
 
 export default function DepensesFixesScreen() {
@@ -94,7 +96,8 @@ export default function DepensesFixesScreen() {
     await togglePaye(depense.id);
     charger();
   }
-
+  const [revenus, setRevenus] = useState<Revenu[]>([]);
+  const totalRevenus = revenus.reduce((somme, r) => somme + r.montant, 0);
   const totalFixe = depensesFixes.reduce((somme, d) => somme + d.montant, 0);
   const totalRestantAPayer = depensesFixes
     .filter((d) => !d.statut)
@@ -115,12 +118,13 @@ export default function DepensesFixesScreen() {
         <View style={styles.summaryRow}>
           <View style={styles.summaryCard}>
             <ThemedText type="small" style={styles.summaryLabel}>
-              Total mensuel
+              Total dépensé
             </ThemedText>
             <ThemedText style={styles.summaryValue}>
               {totalFixe.toFixed(2)} €
             </ThemedText>
           </View>
+
           <View style={styles.summaryCard}>
             <ThemedText type="small" style={styles.summaryLabel}>
               Reste à payer
@@ -128,23 +132,21 @@ export default function DepensesFixesScreen() {
             <ThemedText
               style={[
                 styles.summaryValue,
-                totalRestantAPayer > 0 && styles.summaryAlert,
-              ]}
-            >
+                totalRestantAPayer > 0 && styles.summaryAlert, ]}>
               {totalRestantAPayer.toFixed(2)} €
             </ThemedText>
           </View>
+
+
           <View style={styles.summaryCard}>
             <ThemedText type="small" style={styles.summaryLabel}>
-              Reçu
+              Total reçu
             </ThemedText>
             <ThemedText
               style={[
                 styles.summaryValue,
-                totalRestantAPayer > 0 && styles.summaryAlert,
-              ]}
-            >
-              {totalRestantAPayer.toFixed(2)} €
+                totalRestantAPayer > 0 && styles.summaryAlert,]}>
+              {totalRevenus.toFixed(2)} €
             </ThemedText>
           </View>
         </View>

@@ -15,10 +15,10 @@ export default function RootLayout() {
       <AnimatedSplashOverlay />
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
-        <Stack.Screen
+        {/* <Stack.Screen
           name="add_depense"
           options={{ presentation: 'modal', headerShown: true, title: 'Nouvelle dépense' }}
-        />
+        /> */}
       </Stack>
     </ThemeProvider>
   );

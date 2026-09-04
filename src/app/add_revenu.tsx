@@ -35,10 +35,23 @@ export default function AjouterRevenuScreen() {
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
+      {/* <SafeAreaView style={styles.safeArea}>     
+           <Pressable onPress={() => router.back()} style={styles.backButton}>
+                    <ThemedText style={styles.backButtonText}>‹</ThemedText>
+                  </Pressable>
         <ThemedText type="title" style={styles.title}>
           Nouveau revenu
-        </ThemedText>
+        </ThemedText> */}
+
+        <SafeAreaView style={styles.safeArea}>
+            <View style={styles.header}>
+              <Pressable onPress={() => router.back()} style={styles.backButton}>
+                <ThemedText style={styles.backButtonText}>‹</ThemedText>
+              </Pressable>
+              <ThemedText type="title" style={styles.title}>
+                Nouveau revenu
+              </ThemedText>
+            </View>
 
         <View style={styles.field}>
           <ThemedText type="small" style={styles.label}>
@@ -104,9 +117,9 @@ export default function AjouterRevenuScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   safeArea: { flex: 1, paddingHorizontal: Spacing.four, gap: Spacing.four, paddingTop: Spacing.four },
-  title: { fontSize: 22, marginBottom: Spacing.two },
+  // title: { fontSize: 22, marginBottom: Spacing.two, color: '#020202' },
   field: { gap: Spacing.two },
-  label: { opacity: 0.7 },
+  label: { opacity: 0.7, color: '#020202' },
   input: {
     borderWidth: 1,
     color: '#838181',
@@ -127,7 +140,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   toggleButtonActive: { backgroundColor: '#0202029f', borderColor: '#0202029f' },
-  toggleText: { fontSize: 14 },
+  toggleText: { fontSize: 14, color: '#020202' },
   toggleTextActive: { fontSize: 14, color: '#ffffff', fontWeight: '600' },
   erreur: { color: '#ef4444' },
   submitButton: {
@@ -137,7 +150,45 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: Spacing.three,
   },
+
+
   submitButtonText: { color: '#ffffff', fontWeight: '600', fontSize: 16 },
   cancelButton: { paddingVertical: Spacing.three, alignItems: 'center' },
-  cancelButtonText: { opacity: 0.6 },
+  cancelButtonText: { opacity: 0.6, color: '#020202' },
+
+  // backButton: { paddingVertical: Spacing.one, paddingRight: Spacing.two },
+  // backButtonText: { color: "#c26b8a", fontSize: 30 },
+  headerTitle: { fontSize: 18, color: "#5b3a45" },
+
+    header: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  paddingVertical: Spacing.three,
+},
+backButton: {
+  width: 46,
+  height: 46,
+  borderRadius: 23,
+  backgroundColor: 'rgba(255, 255, 255, 0.6)',
+  justifyContent: 'center',
+  alignItems: 'center',
+  borderWidth: 1,
+  borderColor: 'rgba(255, 255, 255, 0.8)',
+},
+backButtonText: {
+  fontSize: 30,
+  color: '#7a3a52',
+  lineHeight: 46,
+},
+title: {
+  fontSize: 20,
+  color: '#5b3a45',
+  textAlign: 'center',
+  flex: 1,
+},
+headerSpacer: {
+  width: 36, // même largeur que backButton, pour équilibrer visuellement
+},
+
 });
