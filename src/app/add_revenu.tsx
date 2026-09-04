@@ -15,7 +15,7 @@ export default function AjouterRevenuScreen() {
   const [type, setType] = useState<TypeRevenu>('variable');
   const [erreur, setErreur] = useState('');
 
-  async function enregistrerRevenu() {
+  async function enregistrer() {
     const montantNombre = parseFloat(montant.replace(',', '.'));
     if (!nom.trim()) {
       setErreur('Donne un nom à ce revenu.');
@@ -89,7 +89,7 @@ export default function AjouterRevenuScreen() {
 
         {erreur !== '' && <ThemedText style={styles.erreur}>{erreur}</ThemedText>}
 
-        <Pressable style={styles.submitButton} onPress={enregistrerRevenu}>
+        <Pressable style={styles.submitButton} onPress={enregistrer}>
           <ThemedText style={styles.submitButtonText}>Enregistrer</ThemedText>
         </Pressable>
 

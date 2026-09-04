@@ -1,40 +1,52 @@
-import { useState } from 'react';
-import { Pressable, StyleSheet, TextInput, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
+import { LinearGradient } from "expo-linear-gradient";
+import { router } from "expo-router";
+import { useState } from "react";
+import { Pressable, StyleSheet, TextInput, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Spacing } from '@/constants/theme';
-import { addDepense, TypeDepense } from '@/storage/budget-storage';
+import { ThemedText } from "@/components/themed-text";
+import { Spacing } from "@/constants/theme";
+import { addDepense, TypeDepense } from "@/storage/budget-storage";
 
 export default function AjouterDepenseScreen() {
-  const [nom, setNom] = useState('');
-  const [montant, setMontant] = useState('');
-  const [type, setType] = useState<TypeDepense>('variable');
-  const [erreur, setErreur] = useState('');
+  const [nom, setNom] = useState("");
+  const [montant, setMontant] = useState("");
+  const [type, setType] = useState<TypeDepense>("variable");
+  const [erreur, setErreur] = useState("");
+  const [jourInput, setJourInput] = useState("");
+  const [estVisible, setEstVisible] = useState(false);
 
   async function enregistrer() {
-    const montantNombre = parseFloat(montant.replace(',', '.'));
+    const montantNombre = parseFloat(montant.replace(",", "."));
     if (!nom.trim()) {
-      setErreur('Donne un nom à cette dépense.');
+      setErreur("Donne un nom à cette dépense.");
       return;
     }
     if (isNaN(montantNombre) || montantNombre <= 0) {
-      setErreur('Le montant doit être un nombre positif.');
+      setErreur("Le montant doit être un nombre positif.");
       return;
     }
-    await addDepense({ nom: nom.trim(), montant: montantNombre, type });
+    const jour = parseInt(jourInput, 10);
+    const jourPrelevement =
+      type === "fixe" && !isNaN(jour)
+        ? Math.min(31, Math.max(1, jour))
+        : undefined;
+    await addDepense({
+      nom: nom.trim(),
+      montant: montantNombre,
+      type,
+      jourPrelevement,
+    });
     router.back();
   }
 
   return (
     <LinearGradient
-      colors={['#fff0f3', '#ffd9e2', '#ffc2d1']}
+      colors={["#fff0f3", "#ffd9e2", "#ffc2d1"]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
-      style={styles.container}>
+      style={styles.container}
+    >
       <SafeAreaView style={styles.safeArea}>
         <ThemedText type="title" style={styles.title}>
           Nouvelle dépense
@@ -71,23 +83,61 @@ export default function AjouterDepenseScreen() {
           </ThemedText>
           <View style={styles.toggleRow}>
             <Pressable
-              style={[styles.toggleButton, type === 'fixe' && styles.toggleButtonActive]}
-              onPress={() => setType('fixe')}>
-              <ThemedText style={type === 'fixe' ? styles.toggleTextActive : styles.toggleText}>
+              style={[
+                styles.toggleButton,
+                type === "fixe" && styles.toggleButtonActive,
+              ]}
+              onPress={() => {
+                setType("fixe");
+                setEstVisible(true);
+              }}
+            >
+              <ThemedText
+                style={
+                  type === "fixe" ? styles.toggleTextActive : styles.toggleText
+                }
+              >
                 Fixe (récurrente)
               </ThemedText>
             </Pressable>
+
             <Pressable
-              style={[styles.toggleButton, type === 'variable' && styles.toggleButtonActive]}
-              onPress={() => setType('variable')}>
-              <ThemedText style={type === 'variable' ? styles.toggleTextActive : styles.toggleText}>
+              style={[
+                styles.toggleButton,
+                type === "variable" && styles.toggleButtonActive,
+              ]}
+              onPress={() => setType("variable")}
+            >
+              <ThemedText
+                style={
+                  type === "variable"
+                    ? styles.toggleTextActive
+                    : styles.toggleText
+                }
+              >
                 Ponctuelle (variable)
               </ThemedText>
             </Pressable>
           </View>
+          {estVisible && (
+            <View style={styles.field}>
+              <ThemedText type="small" style={styles.label}>
+                Jour du prélèvement (1-31)
+              </ThemedText>
+              <TextInput
+                style={styles.input}
+                placeholder="Ex : 5"
+                keyboardType="number-pad"
+                value={jourInput}
+                onChangeText={setJourInput}
+              />
+            </View>
+          )}
         </View>
 
-        {erreur !== '' && <ThemedText style={styles.erreur}>{erreur}</ThemedText>}
+        {erreur !== "" && (
+          <ThemedText style={styles.erreur}>{erreur}</ThemedText>
+        )}
 
         <Pressable style={styles.submitButton} onPress={enregistrer}>
           <ThemedText style={styles.submitButtonText}>Enregistrer</ThemedText>
@@ -103,42 +153,60 @@ export default function AjouterDepenseScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  safeArea: { flex: 1, paddingHorizontal: Spacing.four, gap: Spacing.four, paddingTop: Spacing.four },
+  safeArea: {
+    flex: 1,
+    paddingHorizontal: Spacing.four,
+    gap: Spacing.four,
+    paddingTop: Spacing.four,
+  },
   title: { fontSize: 22, marginBottom: Spacing.two },
   field: { gap: Spacing.two },
   label: { opacity: 0.7 },
   input: {
     borderWidth: 1,
-    color: '#838181',
-    borderColor: '#d1d5db',
-    backgroundColor: '#fff5f7c7',
+    color: "#838181",
+    borderColor: "#d1d5db",
+    backgroundColor: "#fff5f7c7",
     borderRadius: Spacing.three,
     padding: Spacing.three,
     fontSize: 16,
   },
-  toggleRow: { flexDirection: 'row', gap: Spacing.two },
+  toggleRow: { flexDirection: "row", gap: Spacing.two },
   toggleButton: {
     flex: 1,
     paddingVertical: Spacing.three,
     borderRadius: Spacing.three,
     borderWidth: 1,
-    borderColor: '#d1d5db',
-    backgroundColor: '#fff5f7c7',
-    alignItems: 'center',
+    borderColor: "#d1d5db",
+    backgroundColor: "#fff5f7c7",
+    alignItems: "center",
   },
-  toggleButtonActive: { backgroundColor: '#0202029f', borderColor: '#0202029f' },
+  toggleButtonActive: {
+    backgroundColor: "#0202029f",
+    borderColor: "#0202029f",
+  },
   toggleText: { fontSize: 14 },
-  toggleTextActive: { fontSize: 14, color: '#ffffff', fontWeight: '600' },
-  erreur: { color: '#ef4444' },
+  toggleTextActive: { fontSize: 14, color: "#ffffff", fontWeight: "600" },
+  erreur: { color: "#ef4444" },
   submitButton: {
     // backgroundColor: '#6366f1',
-    backgroundColor: '#0202029f',
+    backgroundColor: "#0202029f",
     paddingVertical: Spacing.three,
     borderRadius: Spacing.four,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: Spacing.three,
   },
-  submitButtonText: { color: '#ffffff', fontWeight: '600', fontSize: 16 },
-  cancelButton: { paddingVertical: Spacing.three, alignItems: 'center' },
+  submitButtonText: { color: "#ffffff", fontWeight: "600", fontSize: 16 },
+  cancelButton: { paddingVertical: Spacing.three, alignItems: "center" },
   cancelButtonText: { opacity: 0.6 },
+
+  modalLabel: { color: "#7a4a58" },
+  modalInput: {
+    borderWidth: 1,
+    borderColor: "#f0c4d1",
+    borderRadius: Spacing.three,
+    padding: Spacing.three,
+    fontSize: 15,
+    color: "#5b3a45",
+  },
 });
