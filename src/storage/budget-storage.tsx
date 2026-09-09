@@ -3,14 +3,19 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export type TypeDepense = "fixe" | "variable";
 export type TypeRevenu = "fixe" | "variable";
 
+export const CATEGORIES_DEPENSE = ['Loyer', 'Charges', 'Courses', 'Loisirs', 'Assurance habitation', 'Autre'] as const;
+export const CATEGORIES_REVENU = ['APL', 'Parents', "Prime d'activité", 'Autre'] as const;
+
+
 export type Depense = {
   id: string;
   nom: string;
   montant: number;
   type: TypeDepense;
+  categorie: string;
   date: string; // ISO string
   jourPrelevement?: number;
-  statut?: boolean;
+  paye?: boolean;
 };
 
 export type Revenu = {
@@ -19,6 +24,9 @@ export type Revenu = {
   montant: number;
   type: TypeRevenu;
   date: string; // ISO string
+  categorie: string;
+  jourVersement?: number;
+  recu?: boolean;
 };
 
 function getMonthKey(date = new Date()) {
@@ -41,16 +49,11 @@ export async function getSalaire(monthKey = getMonthKey()): Promise<number> {
   return value ? parseFloat(value) : 0;
 }
 
-export async function setSalaire(
-  montant: number,
-  monthKey = getMonthKey(),
-): Promise<void> {
+export async function setSalaire(montant: number,monthKey = getMonthKey(),): Promise<void> {
   await AsyncStorage.setItem(salaireKey(monthKey), montant.toString());
 }
 
-export async function getDepenses(
-  monthKey = getMonthKey(),
-): Promise<Depense[]> {
+export async function getDepenses(monthKey = getMonthKey(),): Promise<Depense[]> {
   const value = await AsyncStorage.getItem(depensesKey(monthKey));
   return value ? JSON.parse(value) : [];
 }
@@ -59,80 +62,73 @@ export async function getRevenus(monthKey = getMonthKey()): Promise<Revenu[]> {
   return value ? JSON.parse(value) : [];
 }
 
-export async function deleteDepense(
-  id: string,
-  monthKey = getMonthKey(),
-): Promise<void> {
+export async function deleteDepense(id: string,monthKey = getMonthKey(),): Promise<void> {
   const depenses = await getDepenses(monthKey);
   const misesAJour = depenses.filter((d) => d.id !== id);
   await AsyncStorage.setItem(depensesKey(monthKey), JSON.stringify(misesAJour));
 }
 
-export async function deleteRevenu(
-  id: string,
-  monthKey = getMonthKey(),
-): Promise<void> {
+export async function deleteRevenu(id: string,monthKey = getMonthKey(),): Promise<void> {
   const revenus = await getRevenus(monthKey);
   const misesAJour = revenus.filter((r) => r.id !== id);
   await AsyncStorage.setItem(revenusKey(monthKey), JSON.stringify(misesAJour));
 }
 
-export async function togglePaye(
-  id: string,
-  monthKey = getMonthKey(),
-): Promise<void> {
+export async function togglePaye(id: string,monthKey = getMonthKey(),): Promise<void> {
   const depenses = await getDepenses(monthKey);
-  const misesAJour = depenses.map((d) =>
-    d.id === id ? { ...d, paye: !d.statut } : d,
-  );
+  const misesAJour = depenses.map((d) =>d.id === id ? { ...d, paye: !d.paye } : d,);
   await AsyncStorage.setItem(depensesKey(monthKey), JSON.stringify(misesAJour));
 }
 
-export async function updateDepense(
-  id: string,
-  updates: Partial<Omit<Depense, "id">>,
-  monthKey = getMonthKey(),
-): Promise<void> {
-  const depenses = await getDepenses(monthKey);
-  const misesAJour = depenses.map((d) =>
-    d.id === id ? { ...d, ...updates } : d,
-  );
-  await AsyncStorage.setItem(depensesKey(monthKey), JSON.stringify(misesAJour));
-}
 
-export async function addRevenu(
-  revenu: Omit<Revenu, "id" | "date">,
-  monthKey = getMonthKey(),
-): Promise<Revenu> {
+export async function toggleRecu(id: string, monthKey = getMonthKey()): Promise<void> {
   const revenus = await getRevenus(monthKey);
-  const nouveauRevenu: Revenu = {
+  const maj = revenus.map((r) => (r.id === id ? { ...r, recu: !r.recu } : r));
+  await AsyncStorage.setItem(revenusKey(monthKey), JSON.stringify(maj));
+}
+
+
+
+export async function updateDepense(id: string,updates: Partial<Omit<Depense, "id">>,monthKey = getMonthKey(),): Promise<void> {
+  const depenses = await getDepenses(monthKey);
+  const misesAJour = depenses.map((d) =>d.id === id ? { ...d, ...updates } : d,);
+  await AsyncStorage.setItem(depensesKey(monthKey), JSON.stringify(misesAJour));
+}
+
+export async function addRevenu(revenu: Omit<Revenu, "id" | "date">,monthKey = getMonthKey(),): Promise<Revenu> {
+  const revenus = await getRevenus(monthKey);
+  const nouveau: Revenu = {
     ...revenu,
     id: Date.now().toString(),
     date: new Date().toISOString(),
+    recu: revenu.type === 'fixe' ? (revenu.recu ?? false) : true,
   };
-  const misesAJour = [nouveauRevenu, ...revenus];
+  const misesAJour = [nouveau, ...revenus];
   await AsyncStorage.setItem(revenusKey(monthKey), JSON.stringify(misesAJour));
-  return nouveauRevenu;
+  return nouveau;
 }
 
-export async function addDepense(
-  depense: Omit<Depense, "id" | "date">,
-  monthKey = getMonthKey(),
-): Promise<Depense> {
+export async function updateRevenu(id: string, updates: Partial<Omit<Revenu, 'id'>>, monthKey = getMonthKey()): Promise<void> {
+  const revenus = await getRevenus(monthKey);
+  const maj = revenus.map((r) => (r.id === id ? { ...r, ...updates } : r));
+  await AsyncStorage.setItem(revenusKey(monthKey), JSON.stringify(maj));
+}
+
+export async function addDepense(depense: Omit<Depense, "id" | "date">,monthKey = getMonthKey(),): Promise<Depense> {
   const depenses = await getDepenses(monthKey);
   const nouvelleDepense: Depense = {
     ...depense,
     id: Date.now().toString(),
     date: new Date().toISOString(),
+    paye: depense.type === 'fixe' ? (depense.paye ?? false) : true,
+
   };
   const misesAJour = [nouvelleDepense, ...depenses];
   await AsyncStorage.setItem(depensesKey(monthKey), JSON.stringify(misesAJour));
   return nouvelleDepense;
 }
 
-export async function getBudgetRestant(
-  monthKey = getMonthKey(),
-): Promise<number> {
+export async function getBudgetRestant(monthKey = getMonthKey(),): Promise<number> {
   const [salaire, depenses, revenus] = await Promise.all([
     getSalaire(monthKey),
     getDepenses(monthKey),

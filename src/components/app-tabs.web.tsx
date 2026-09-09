@@ -27,6 +27,7 @@ export default function AppTabs() {
           <TabTrigger name="tableau" href="/tableau" asChild>
             <TabButton>Tableau</TabButton>
           </TabTrigger>
+          
         </CustomTabList>
       </TabList>
     </Tabs>
