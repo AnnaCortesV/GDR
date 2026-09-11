@@ -34,7 +34,7 @@ const PALETTES = {
     negative: '#e0577a',
   },
   dark: {
-    gradient: ['#0b0f1c', '#131a2c', '#1c2540'] as const,
+    gradient: ['#0b0f1c', '#131a2c', '#301c40'] as const,
     cardBg: 'rgba(255, 255, 255, 0.06)',
     cardBorder: 'rgba(255, 255, 255, 0.12)',
     iconBg: 'rgba(127, 156, 245, 0.18)',
@@ -102,7 +102,7 @@ export default function HomeScreen() {
   const depensesTriees = [...depenses].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   return (
-    <LinearGradient colors={palette.gradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.container}>
+    <LinearGradient colors={palette.gradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.container}>
       <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
         {/* Header */}
         <View style={styles.header}>

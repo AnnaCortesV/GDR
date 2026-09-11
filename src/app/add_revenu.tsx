@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useAppTheme } from '@/contexts/theme-context';
 import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -8,7 +9,35 @@ import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
 import { addRevenu, CATEGORIES_REVENU, TypeDepense } from '@/storage/budget-storage';
 
+const PALETTES = {
+  light: {
+    gradient: ['#fff0f3', '#ffd9e2', '#ffc2d1'] as const,
+    cardBg: 'rgba(255, 255, 255, 0.55)',
+    cardBorder: 'rgba(255, 255, 255, 0.8)',
+    iconBg: 'rgba(194, 107, 138, 0.15)',
+    textPrimary: '#5b3a45',
+    textSecondary: '#7a4a58',
+    accent: '#c26b8a',
+    positive: '#4caf7d',
+    negative: '#e0577a',
+  },
+  dark: {
+    gradient: ['#0b0f1c', '#131a2c', '#301c40'] as const,
+    cardBg: 'rgba(255, 255, 255, 0.06)',
+    cardBorder: 'rgba(255, 255, 255, 0.12)',
+    iconBg: 'rgba(127, 156, 245, 0.18)',
+    textPrimary: '#f2f4fa',
+    textSecondary: '#9aa3c0',
+    accent: '#7f9cf5',
+    positive: '#4ade80',
+    negative: '#f87171',
+  },
+};
+
 export default function AjouterRevenuScreen() {
+  const { scheme } = useAppTheme();
+  const palette = PALETTES[scheme];
+
   const [nom, setNom] = useState('');
   const [montant, setMontant] = useState('');
   const [type, setType] = useState<TypeDepense>('fixe');
@@ -33,58 +62,64 @@ export default function AjouterRevenuScreen() {
   }
 
   return (
-    <LinearGradient colors={['#fff0f3', '#ffd9e2', '#ffc2d1']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.container}>
+    <LinearGradient colors={palette.gradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} style={styles.backButton}>
-            <ThemedText style={styles.backButtonText}>‹</ThemedText>
+            <ThemedText style={[styles.backButtonText, { color: palette.textPrimary }]}>‹</ThemedText>
           </Pressable>
-          <ThemedText type="title" style={styles.title}>Nouveau revenu</ThemedText>
+          <ThemedText type="title" style={[styles.title, { color: palette.textPrimary }]}>Nouveau revenu</ThemedText>
           <View style={styles.headerSpacer} />
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.field}>
-            <ThemedText type="small" style={styles.label}>Nom du revenu</ThemedText>
-            <TextInput style={styles.input} placeholder="Ex : APL, Prime..." value={nom} onChangeText={setNom} />
+            <ThemedText type="small" style={[styles.label, { color: palette.textPrimary }]}>Nom du revenu</ThemedText>
+            <TextInput
+              style={[styles.input, { color: palette.textPrimary }]}
+              placeholderTextColor={palette.textPrimary}
+              placeholder="Ex : APL, Prime..."
+              value={nom}
+              onChangeText={setNom}
+            />
           </View>
 
           <View style={styles.field}>
-            <ThemedText type="small" style={styles.label}>Montant (€)</ThemedText>
-            <TextInput style={styles.input} placeholder="0.00" keyboardType="decimal-pad" value={montant} onChangeText={setMontant} />
+            <ThemedText type="small" style={[styles.label, { color: palette.textPrimary }]}>Montant (€)</ThemedText>
+            <TextInput style={[styles.input, { color: palette.textPrimary }]} placeholderTextColor={palette.textPrimary} placeholder="0.00" keyboardType="decimal-pad" value={montant} onChangeText={setMontant} />
           </View>
 
           <View style={styles.field}>
-            <ThemedText type="small" style={styles.label}>Catégorie</ThemedText>
+            <ThemedText type="small" style={[styles.label, { color: palette.textPrimary }]}>Catégorie</ThemedText>
             <View style={styles.chipRow}>
               {CATEGORIES_REVENU.map((cat) => (
                 <Pressable key={cat} onPress={() => setCategorie(cat)} style={[styles.chip, categorie === cat && styles.chipActive]}>
-                  <ThemedText style={categorie === cat ? styles.chipTextActive : styles.chipText}>{cat}</ThemedText>
+                  <ThemedText style={[categorie === cat ? styles.chipTextActive : styles.chipText, { color: palette.textPrimary }]}>{cat}</ThemedText>
                 </Pressable>
               ))}
             </View>
           </View>
 
           <View style={styles.field}>
-            <ThemedText type="small" style={styles.label}>Type de revenu</ThemedText>
+            <ThemedText type="small" style={[styles.label, { color: palette.textPrimary }]}>Type de revenu</ThemedText>
             <View style={styles.toggleRow}>
               <Pressable style={[styles.toggleButton, type === 'fixe' && styles.toggleButtonActive]} onPress={() => setType('fixe')}>
-                <ThemedText style={type === 'fixe' ? styles.toggleTextActive : styles.toggleText}>Fixe (récurrent)</ThemedText>
+                <ThemedText style={[type === 'fixe' ? styles.toggleTextActive : styles.toggleText, { color: palette.textPrimary }]}>Fixe (récurrent)</ThemedText>
               </Pressable>
               <Pressable style={[styles.toggleButton, type === 'variable' && styles.toggleButtonActive]} onPress={() => setType('variable')}>
-                <ThemedText style={type === 'variable' ? styles.toggleTextActive : styles.toggleText}>Ponctuel</ThemedText>
+                <ThemedText style={[type === 'variable' ? styles.toggleTextActive : styles.toggleText, { color: palette.textPrimary }]}>Ponctuel</ThemedText>
               </Pressable>
             </View>
           </View>
 
           {type === 'fixe' && (
             <View style={styles.field}>
-              <ThemedText type="small" style={styles.label}>Jour de versement (1-31)</ThemedText>
-              <TextInput style={styles.input} placeholder="Ex : 5" keyboardType="number-pad" value={jour} onChangeText={setJour} />
+              <ThemedText type="small" style={[styles.label, { color: palette.textPrimary }]}>Jour de versement (1-31)</ThemedText>
+              <TextInput style={[styles.input, { color: palette.textPrimary }]} placeholderTextColor={palette.textPrimary} placeholder="Ex : 5" keyboardType="number-pad" value={jour} onChangeText={setJour} />
             </View>
           )}
 
-          {erreur !== '' && <ThemedText style={styles.erreur}>{erreur}</ThemedText>}
+          {erreur !== '' && <ThemedText style={[styles.erreur, { color: palette.negative }]}>{erreur}</ThemedText>}
 
           <Pressable style={styles.submitButton} onPress={enregistrer}>
             <ThemedText style={styles.submitButtonText}>Enregistrer</ThemedText>

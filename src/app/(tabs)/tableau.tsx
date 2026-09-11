@@ -3,7 +3,7 @@ import { Modal, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-
+import { useAppTheme } from '@/contexts/theme-context';
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
 import {
@@ -21,9 +21,36 @@ import {
   updateRevenu,
 } from '@/storage/budget-storage';
 
+const PALETTES = {
+  light: {
+    gradient: ['#fff0f3', '#ffd9e2', '#ffc2d1'] as const,
+    cardBg: 'rgba(255, 255, 255, 0.55)',
+    cardBorder: 'rgba(255, 255, 255, 0.8)',
+    iconBg: 'rgba(194, 107, 138, 0.15)',
+    textPrimary: '#5b3a45',
+    textSecondary: '#7a4a58',
+    accent: '#c26b8a',
+    positive: '#4caf7d',
+    negative: '#e0577a',
+  },
+  dark: {
+    gradient: ['#0b0f1c', '#131a2c', '#301c40'] as const,
+    cardBg: 'rgba(255, 255, 255, 0.06)',
+    cardBorder: 'rgba(255, 255, 255, 0.12)',
+    iconBg: 'rgba(127, 156, 245, 0.18)',
+    textPrimary: '#f2f4fa',
+    textSecondary: '#9aa3c0',
+    accent: '#7f9cf5',
+    positive: '#4ade80',
+    negative: '#f87171',
+  },
+};
+
 type Section = 'revenusFixe' | 'revenusVariable' | 'depensesFixe' | 'depensesVariable';
 
 export default function TableauScreen() {
+  const { scheme } = useAppTheme();
+  const palette = PALETTES[scheme];
   const [depenses, setDepenses] = useState<Depense[]>([]);
   const [revenus, setRevenus] = useState<Revenu[]>([]);
   const [ouvert, setOuvert] = useState<Record<Section, boolean>>({
@@ -179,7 +206,7 @@ export default function TableauScreen() {
   }
 
   return (
-    <LinearGradient colors={['#fff0f3', '#ffd9e2', '#ffc2d1']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.container}>
+    <LinearGradient colors={palette.gradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.container}>
       <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} style={styles.backButton}>
